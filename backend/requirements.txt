@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+pymongo
+neo4j
+networkx
+python-jose[cryptography]
+passlib
+python-multipart
+httpx
+pytest
+razorpay
