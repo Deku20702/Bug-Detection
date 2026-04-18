@@ -23,6 +23,7 @@ services:
       - ./backend:/app
     command: sh -c "pip install -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     environment:
+      storage_mode: "production"  
       mongodb_uri: mongodb://mongo:27017
       mongodb_db: structural_bug_db
       neo4j_uri: bolt://neo4j:7687
@@ -40,12 +41,14 @@ services:
     working_dir: /app
     volumes:
       - ./frontend:/app
+      - /app/node_modules   # <--- THIS STOPS THE SIGSEGV CRASH
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
     ports:
       - "5173:5173"
     depends_on:
       - backend
 
+# Make sure this is all the way to the left edge!
 volumes:
   mongo_data:
   neo4j_data:

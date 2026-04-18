@@ -60,6 +60,33 @@ def start_scan(payload: ScanStartRequest, email: str = Depends(get_current_user_
     features = extract_features(graph)
     risks = predict_module_risks(features)
     recommendations = run_langgraph_reasoning(risks, anti_patterns)
+    
+    # --- NEW CODE: INJECT CODE EVIDENCE INTO RECOMMENDATIONS ---
+    # We map the exact lines of code from the graph edges into the recommendations
+    for rec in recommendations:
+        module_name = rec.get("module")
+        evidence_list = []
+        
+        if module_name and graph.has_node(module_name):
+            for _, target, edge_data in graph.out_edges(module_name, data=True):
+                if "evidence" in edge_data:
+                    evidence_list.extend(edge_data["evidence"])
+            
+            in_count = 0
+            for source, _, edge_data in graph.in_edges(module_name, data=True):
+                if "evidence" in edge_data and in_count < 3:
+                    evidence_list.extend(edge_data["evidence"])
+                    in_count += 1
+            
+            # THE FIX: Remove duplicates so the UI looks clean!
+            unique_evidence = { (e["line"], e["code"]): e for e in evidence_list }.values()
+            
+            # Sort the evidence by line number
+            evidence_list = sorted(list(unique_evidence), key=lambda x: x.get("line", 0))
+            
+        rec["evidence"] = evidence_list
+    # -----------------------------------------------------------
+
     edges = list(graph.edges())
     _persist_graph(payload.project_id, edges)
 
@@ -142,4 +169,3 @@ def scan_recommendations(scan_id: str, email: str = Depends(get_current_user_ema
     if not scan:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Scan not found")
     return scan["recommendations"]
-
