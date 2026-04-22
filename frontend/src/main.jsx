@@ -1,8 +1,12 @@
-// D:\MCA STUFF\Major Project\project\frontend\src\main.jsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <GoogleOAuthProvider clientId="YOUR_CLIENT_ID_HERE.apps.googleusercontent.com">
-    <App />
-  </GoogleOAuthProvider>
+  <React.StrictMode>
+    <GoogleOAuthProvider clientId="PASTE_YOUR_CLIENT_ID_FROM_GOOGLE_CONSOLE_HERE">
+      <App />
+    </GoogleOAuthProvider>
+  </React.StrictMode>
 );
