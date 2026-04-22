@@ -1,3 +1,4 @@
+import Charts from "../Charts";
 import React, { useState, useEffect, useRef } from 'react';
 import client from '../../api';
 import ModuleTable from './ModuleTable';
@@ -302,7 +303,7 @@ const Dashboard = ({ userName, initials, handleLogout }) => {
         {/* DYNAMIC DASHBOARD CONTENT */}
         {isScanning ? (
           <SkeletonDashboard />
-        ) : (!summary || !modules.length) ? (
+        ) : (!summary) ? (
           <div className="empty-state" style={{ background: 'transparent', border: '1px dashed rgba(255,255,255,0.05)' }}>
              <div className="empty-content">
                 <div className="scan-radar">
@@ -318,6 +319,12 @@ const Dashboard = ({ userName, initials, handleLogout }) => {
           </div>
         ) : (
           <div className="dashboard-content fade-in">
+
+            {modules.length === 0 && (
+              <p style={{ textAlign: "center", marginBottom: "20px", color: "#aaa" }}>
+                No modules detected. Try scanning a larger repository.
+              </p>
+            )}
 
             {/* QUALITY GATE BANNER */}
             <div style={{
@@ -435,45 +442,73 @@ const Dashboard = ({ userName, initials, handleLogout }) => {
               </div>
             </div>
 
-            {/* MID ROW: ANTI-PATTERNS & RISK DONUT */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-              <div className="panel">
-                <div className="panel-header"><span className="panel-title">Anti-patterns detected</span></div>
-                <div className="pattern-list">
-                  {!summary?.anti_patterns?.length ? (
-                     <div className="rec-desc">No known anti-patterns matched.</div>
-                  ) : summary.anti_patterns.map((p, i) => (
-                    <div className="pattern-item" key={i}>
-                      <div className="pattern-dot" style={{ background: getPatternColor(i) }}></div>
-                      <span>{p}</span>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ marginTop: "16px", paddingTop: "16px", borderTop: "0.5px solid var(--color-border-tertiary)" }}>
-                  <div className="panel-header" style={{ marginBottom: "10px" }}><span className="panel-title">File coverage</span></div>
-                  <div className="file-stats">
-                    <div className="file-row"><span className="file-key">Total Python files</span><span className="file-val">{summary?.analyzer_stats?.total_python_files || 0}</span></div>
-                    <div className="file-row"><span className="file-key">Parseable</span><span className="file-val">{summary?.analyzer_stats?.parseable_python_files || 0}</span></div>
-                    <div className="file-row"><span className="file-key">Skipped (syntax)</span><span className="file-val">{summary?.analyzer_stats?.skipped_python_files || 0}</span></div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="panel">
-                <div className="panel-header"><span className="panel-title">Risk distribution</span></div>
-                <RiskDonut modules={modules} summary={summary} />
-                <div style={{ marginTop: "20px" }}>
-                  <button onClick={downloadCsv} style={{width:"100%", padding:"9px", border:"0.5px solid var(--color-border-tertiary)", borderRadius:"var(--border-radius-md)", background:"var(--color-background-secondary)", color:"var(--color-text-primary)", fontSize:"12px", cursor:"pointer", transition: "background 0.2s"}} onMouseOver={e => e.target.style.background = 'var(--color-background-tertiary)'} onMouseOut={e => e.target.style.background = 'var(--color-background-secondary)'}>
-                    Export CSV ↗
-                  </button>
-                </div>
+           {/* MID ROW: RISK DONUT & ANTI-PATTERNS */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            
+            {/* Risk distribution FIRST */}
+            <div className="panel">
+              <div className="panel-header"><span className="panel-title">Risk distribution</span></div>
+              <RiskDonut modules={modules} summary={summary} />
+              <div style={{ marginTop: "20px" }}>
+                <button onClick={downloadCsv} style={{
+                  width:"100%", padding:"9px", border:"0.5px solid var(--color-border-tertiary)",
+                  borderRadius:"var(--border-radius-md)", background:"var(--color-background-secondary)",
+                  color:"var(--color-text-primary)", fontSize:"12px", cursor:"pointer", transition: "background 0.2s"
+                }}
+                onMouseOver={e => e.target.style.background = 'var(--color-background-tertiary)'} 
+                onMouseOut={e => e.target.style.background = 'var(--color-background-secondary)'}>
+                  Export CSV ↗
+                </button>
               </div>
             </div>
+
+            {/* Anti-patterns SECOND */}
+            <div className="panel">
+              <div className="panel-header"><span className="panel-title">Anti-patterns detected</span></div>
+              <div className="pattern-list">
+                {!summary?.anti_patterns?.length ? (
+                  <div className="rec-desc">No known anti-patterns matched.</div>
+                ) : summary.anti_patterns.map((p, i) => (
+                  <div className="pattern-item" key={i}>
+                    <div className="pattern-dot" style={{ background: getPatternColor(i) }}></div>
+                    <span>{p}</span>
+                  </div>
+                ))}
+              </div>
+
+    <div style={{ marginTop: "16px", paddingTop: "16px", borderTop: "0.5px solid var(--color-border-tertiary)" }}>
+      <div className="panel-header" style={{ marginBottom: "10px" }}>
+        <span className="panel-title">File coverage</span>
+      </div>
+      <div className="file-stats">
+        <div className="file-row"><span className="file-key">Total Python files</span><span className="file-val">{summary?.analyzer_stats?.total_python_files || 0}</span></div>
+        <div className="file-row"><span className="file-key">Parseable</span><span className="file-val">{summary?.analyzer_stats?.parseable_python_files || 0}</span></div>
+        <div className="file-row"><span className="file-key">Skipped (syntax)</span><span className="file-val">{summary?.analyzer_stats?.skipped_python_files || 0}</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
 
             {/* FULL WIDTH TREND CHART */}
             <div className="panel" style={{ width: '100%', marginBottom: '16px' }}>
               <div className="panel-header"><span className="panel-title">Historical Risk Trend</span></div>
               <TrendChart data={trendData} />
+            </div>
+
+            {/* INTERACTIVE CHART PANEL */}
+            <div className="panel" style={{ width: '100%', marginBottom: '16px' }}>
+              <div className="panel-header">
+                <span className="panel-title">Advanced Analytics</span>
+              </div>
+
+              <Charts 
+                risks={Object.fromEntries(modules.map(m => [m.module, m.risk]))} 
+                features={modules.map(m => ({
+                  module: m.module,
+                  out_degree: m.features?.out_degree || 0
+                }))} 
+              />
             </div>
 
             {/* BOTTOM ROW: FULL WIDTH MODULE TABLE */}
