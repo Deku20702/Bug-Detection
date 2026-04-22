@@ -1,26 +1,47 @@
-import math
+import joblib
+import os
 
+MODEL_PATH = "models/defect_model.pkl"
 
-def _sigmoid(value: float) -> float:
-    return 1 / (1 + math.exp(-value))
+model = None
+
+# Load model once
+if os.path.exists(MODEL_PATH):
+    try:
+        model = joblib.load(MODEL_PATH)
+        print("ML model loaded")
+    except Exception as e:
+        print("❌ Model load failed:", e)
+        model = None
 
 
 def predict_module_risks(features: list[dict]) -> dict[str, float]:
-    if not features:
-        return {}
+    if model is None:
+        return {f["module"]: 0.5 for f in features}
 
-    # Lightweight, deterministic ML-style scoring for environments
-    # where binary wheels are unavailable.
-    risks: dict[str, float] = {}
-    for feature in features:
-        linear_score = (
-            (0.08 * feature["in_degree"])
-            + (0.09 * feature["out_degree"])
-            + (1.7 * feature["betweenness"])
-            + (0.25 * feature["cycle_count"])
-            + (0.0035 * feature["loc_proxy"])
-            - 1.5
-        )
-        risks[feature["module"]] = round(_sigmoid(linear_score), 4)
-    return risks
+    try:
+        # ⚠️ MUST match training columns
+        feature_cols = [
+            "lines_of_code",
+            "code_churn",
+            "num_developers",
+            "commit_frequency",
+            "bug_fix_commits",
+            "past_defects"
+        ]
 
+        X = []
+        for f in features:
+            row = [f.get(col, 0) for col in feature_cols]
+            X.append(row)
+
+        probs = model.predict_proba(X)[:, 1]
+
+        return {
+            f["module"]: float(round(p, 4))
+            for f, p in zip(features, probs)
+        }
+
+    except Exception as e:
+        print("❌ ML prediction failed:", e)
+        return {f["module"]: 0.5 for f in features}

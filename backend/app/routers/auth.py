@@ -1,60 +1,31 @@
-from datetime import datetime, timezone
+# backend/app/routers/auth.py
+import httpx # Required: pip install httpx
 
-from fastapi import APIRouter, Depends, HTTPException, status
-
-from app.database import mongo_db
-from app.deps import get_current_user_email
-from app.schemas import AuthResponse, LoginRequest, RegisterRequest
-from app.security import create_access_token, hash_password, verify_password
-
-router = APIRouter()
-
-
-@router.post("/register", response_model=AuthResponse)
-def register(payload: RegisterRequest) -> AuthResponse:
-    users = mongo_db["users"]
-    if users.find_one({"email": payload.email}):
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exists")
-    users.insert_one(
-        {
-            "name": payload.email.split("@")[0],
-            "email": payload.email,
-            "password_hash": hash_password(payload.password),
-            "role": "free",
-            "created_at": datetime.now(timezone.utc),
-        }
-    )
-    token = create_access_token(payload.email)
-    return AuthResponse(access_token=token)
-
-
-@router.post("/login", response_model=AuthResponse)
-def login(payload: LoginRequest) -> AuthResponse:
-    user = mongo_db["users"].find_one({"email": payload.email})
-    if not user:
-        # Demo-friendly flow: allow direct login by auto-creating user
-        # if account does not exist yet.
-        mongo_db["users"].insert_one(
-            {
-                "name": payload.email.split("@")[0],
-                "email": payload.email,
-                "password_hash": hash_password(payload.password),
-                "role": "free",
-                "created_at": datetime.now(timezone.utc),
-            }
+@router.post("/google-login", response_model=AuthResponse)
+async def google_login(payload: dict) -> AuthResponse:
+    token = payload.get("token")
+    async with httpx.AsyncClient() as client:
+        # Verify the token directly with Google
+        resp = await client.get(
+            "https://www.googleapis.com/oauth2/v3/userinfo",
+            headers={"Authorization": f"Bearer {token}"}
         )
-        user = mongo_db["users"].find_one({"email": payload.email})
-    if not user or not verify_password(payload.password, user["password_hash"]):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-    token = create_access_token(payload.email)
-    return AuthResponse(access_token=token)
+        if resp.status_code != 200:
+            raise HTTPException(status_code=401, detail="Google token invalid")
+        
+        google_user = resp.json()
+        email = google_user["email"]
 
-
-@router.get("/me")
-def me(email: str = Depends(get_current_user_email)) -> dict:
-    user = mongo_db["users"].find_one({"email": email}, {"password_hash": 0})
+    # Sync user with your MongoDB
+    users = mongo_db["users"]
+    user = users.find_one({"email": email})
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    user["id"] = str(user.pop("_id"))
-    return user
-
+        users.insert_one({
+            "name": google_user.get("name", email.split("@")[0]),
+            "email": email,
+            "password_hash": None, # Google users don't have local passwords
+            "role": "free",
+            "created_at": datetime.now(timezone.utc)
+        })
+    
+    return AuthResponse(access_token=create_access_token(email))

@@ -1,10 +1,30 @@
 import React, { useState } from 'react';
 import client, { setAuthToken } from '../../api';
 import toast from 'react-hot-toast';
+import { useGoogleLogin } from '@react-oauth/google'; // Import the hook
 
 const LoginScreen = ({ onLoginSuccess }) => {
   const [auth, setAuth] = useState({ email: "", password: "" });
   const [authMode, setAuthMode] = useState("login");
+
+  // logic for Google Login
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        // This sends the Google access_token to your FastAPI backend
+        const response = await client.post("/auth/google-login", {
+          token: tokenResponse.access_token
+        });
+        
+        setAuthToken(response.data.access_token);
+        onLoginSuccess(response.data.access_token, "Google User");
+        toast.success("Signed in with Google!");
+      } catch (error) {
+        toast.error("Google authentication failed on the server.");
+      }
+    },
+    onError: () => toast.error("Google Login Failed"),
+  });
 
   const handleAuthSubmit = async () => {
     if (!auth.email || !auth.password) {
@@ -67,6 +87,17 @@ const LoginScreen = ({ onLoginSuccess }) => {
           
           <button className="auth-btn" onClick={handleAuthSubmit}>
             {authMode === "login" ? "Sign in" : "Register"}
+          </button>
+
+          {/* New Google Login Button */}
+          <div className="auth-divider" style={{ margin: '20px 0', textAlign: 'center', color: '#666' }}>OR</div>
+          
+          <button 
+            className="auth-btn google-btn" 
+            onClick={() => loginWithGoogle()}
+            style={{ backgroundColor: '#fff', color: '#333', border: '1px solid #ddd' }}
+          >
+            Continue with Google
           </button>
           
           <div className="auth-toggle-wrap">

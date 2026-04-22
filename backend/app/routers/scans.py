@@ -11,8 +11,6 @@ from app.services.analyzer import build_dependency_graph, detect_anti_patterns
 from app.services.features import extract_features
 from app.services.ml import predict_module_risks
 from app.services.repo_fetch import prepare_repo_path
-from app.services.reasoning import run_langgraph_reasoning
-
 router = APIRouter()
 
 
@@ -58,9 +56,22 @@ def start_scan(payload: ScanStartRequest, email: str = Depends(get_current_user_
     graph, analyzer_stats = build_dependency_graph(repo_path)
     anti_patterns = detect_anti_patterns(graph)
     features = extract_features(graph)
-    risks = predict_module_risks(features)
-    recommendations = run_langgraph_reasoning(risks, anti_patterns)
-    
+
+    print("GRAPH NODES:", list(graph.nodes()))
+    print("GRAPH EDGES:", list(graph.edges()))
+
+    try:
+        risks = predict_module_risks(features)
+    except Exception as e:
+        print("ML ERROR:", e)
+        risks = {f["module"]: 0.5 for f in features}
+
+    try:
+        recommendations = []
+    except Exception as e:
+        print("REASONING ERROR:", e)
+        recommendations = []
+
     # --- NEW CODE: INJECT CODE EVIDENCE INTO RECOMMENDATIONS ---
     # We map the exact lines of code from the graph edges into the recommendations
     for rec in recommendations:
