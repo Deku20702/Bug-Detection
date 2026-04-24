@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { setAuthToken } from "./api";
+import client from "./api";
 import LoginScreen from "./components/auth/LoginScreen";
 import Dashboard from "./components/dashboard/Dashboard";
 import { Toaster } from 'react-hot-toast'; 
@@ -16,7 +17,15 @@ export default function App() {
     }
   }, [token]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      if (token) {
+        await client.post("/auth/logout");
+      }
+    } catch (e) {
+      console.warn("Logout request failed, continuing local clear", e);
+    }
+
     setToken("");
     setAuthToken("");
     setUserEmail("");

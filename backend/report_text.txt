@@ -1,0 +1,472 @@
+Smart AI-Based Structural Bug Detection and Prevention System
+using Machine Learning and LangGraph
+SYNOPSIS
+by
+Donkupar Bamon
+Student Id: DC2024MCA0031
+MASTER OF COMPUTER APPLICATIONS
+DEPARTMENT OF COMPUTER APPLICATIONS
+ASSAM DON BOSCO UNIVERSITY SCHOOL OF TECHNOLOGY, AZARA,
+GUWAHATI
+781 017, ASSAM, INDIA.
+MCA (2024-2026)
+
+XopunTech India Private Limited
+Regd. Address
+H.No. 1330, Garigaon Pahlanpara Road
+Garigaon Bezpara
+Dist: Kamrup(M)
+Guwahati 781012, Assam
+India
+9611654101
+info@xopuntech.com
+https://xopuntech.com
+Garigaon, Guwahati 781012 , India
+To Date: 21-01-2026
+Donkupar Bamon ,
+ADBU, 4th Sem.
+Azara, Assam.
+Email: donkuparbamon12345@gmail.com
+Phone: 8729926487
+Subject: Confirmation of Enrollment – XT Academy Placement Bootcamp cum Internship
+Program
+Dear Donkupar Bamon ,
+Congratulations! We are pleased to confirm your enrollment in the XT Academy Placement
+Bootcamp cum Internship Program conducted by XopunTech (India) Pvt. Ltd. We are
+delighted to welcome you and look forward to supporting your learning and professional
+development during the program.
+Bootcamp Details
+● Program Start Date: 20-01-26
+● Duration: 4-5 Months
+● Location: Hybrid Model (Office & Remote)
+● Office Address: Unit-B, STPI Borjhar, SOS Road, Guwahati, Assam – 781015
+● Work Timings: Monday to Friday, 10:30 AM – 6:30 PM
+● Work Mode: 3 Days In-Office, 2 Days Remote
+I wish you a productive and rewarding learning experience at XT Academy.
+Warm regards,
+MD MUKIBUL ISLAM,
+MANAGING DIRECTOR
+XOPUNTECH (INDIA) PRIVATE LIMITED
+XopunTech India Private Limited
+Regd. Address
+H.No. 1330, Garigaon Pahlanpara Road
+Garigaon Bezpara
+Dist: Kamrup(M)
+Guwahati 781012, Assam
+India
+9611654101
+info@xopuntech.com
+https://xopuntech.com
+Garigaon, Guwahati 781012 , India
+Terms and Conditions
+1. You must attend all sessions as part of the Bootcamp curriculum.
+2. Your project and responsibilities during the Bootcamp will be assigned by your
+supervisor.
+3. You are expected to complete assigned tasks and adhere to given deadlines.
+4. Timely attendance and active participation are crucial for successful completion of the
+program.
+5. Leaves may be granted only in cases of illness, emergencies, or unforeseen
+contingencies.
+6. However, all leave requests must be sent via email to the HR
+department/Management with your mentor in CC. Prior approval from your mentor
+and higher-level manager is required.
+7. For leave exceeding two days due to sickness, medical documentation is required.
+8. You are required to bring your personal laptop for the duration of the Bootcamp.
+9. A confidentiality agreement must be signed before commencing your Bootcamp. Any
+breach of confidentiality policies may result in termination from the program.
+10. This Bootcamp does not constitute an employment contract or an offer of
+employment with XopunTech (India) Pvt. Ltd. However, placement assistance will be
+provided upon successful completion of the program.
+11. A PAP agreement must be signed, outlining the terms and conditions, stating that
+upon securing a job, you will be required to compensate us with one month’s salary,
+either in full or through installments.
+Additional Terms
+12. Failure to maintain satisfactory performance, regular attendance, or adherence to the
+rules, code of conduct, and instructions of XT Academy and XopunTech (India) Pvt.
+Ltd. may result in discontinuation from the program. In such cases, no completion
+certificate will be issued, and no refund of any fees paid shall be applicable.
+13. Issuance of the Bootcamp / Internship completion certificate is strictly subject to
+minimum attendance, satisfactory performance, timely task completion, and full
+XopunTech India Private Limited
+Regd. Address
+H.No. 1330, Garigaon Pahlanpara Road
+Garigaon Bezpara
+Dist: Kamrup(M)
+Guwahati 781012, Assam
+India
+9611654101
+info@xopuntech.com
+https://xopuntech.com
+Garigaon, Guwahati 781012 , India
+compliance with program guidelines. XT Academy reserves the sole discretion to
+determine eligibility for certification.
+14. The first instalment of the Bootcamp fees must be paid prior to the commencement
+of the program. Any remaining dues must be cleared within 30 days from the date
+of Bootcamp commencement. Failure to clear dues within the stipulated timeframe
+may result in suspension from sessions, withholding of certification, or termination
+from the program until all dues are settled.
+By proceeding with the program, you acknowledge and agree to comply with the above
+terms and conditions.
+Student Acknowledgment & Acceptance
+I, Donkupar Bamon , acknowledge receipt of this Confirmation Letter and confirm my
+acceptance of enrollment in the XT Academy Placement Bootcamp cum Internship Program
+conducted by XopunTech (India) Pvt. Ltd.
+I have read, understood, and agree to comply with the program structure, code of conduct,
+attendance requirements, and operational guidelines mentioned above for the duration of
+the Bootcamp.
+…………………………………………….
+Donkupar Bamon
+
+Contents
+Chapter 1 Introduction
+1.1 Project Title ........................................................................................................................1
+1.2 Introduction........................................................................................................................1
+1.3 Problem Statement ............................................................................................................1
+1.4 Objectives ......................................................................................................................…. 2
+1.5 Scope and Limitations .....................................................................................................2-3
+Chapter 2 Existing System and Feasibility Study
+2.1 Literature Review / Existing System Study …….……………………………………………….……………… 4
+2.2 Technical Feasibility ……………………………………………………………………………………………….……… 4
+2.2.1 Hardware Requirements ….................................................................................. 5
+2.2.2 Software Requirements ................................................................................... 5-6
+2.3 Operational Feasibility ..................................................................................................…… 6
+2.4 Economic Feasibility .....................................................................................................…… 6
+2.4.1 COCOMO Model ..............................................................................………………… 7
+2.5 Schedule Feasibility ........................................................................................................... 8
+2.5.1 Work Breakdown Structure ...............................................................………………. 9
+2.5.2 Gant Chart .......................................................................................………………. 10
+Chapter 3 Proposed System / System Design
+3.1 System Overview ………..................................................................................................… 11
+3.2 Functional Modules..................................................................................................... 11-12
+3.3 System Design …….........................................................................................................…. 13
+3.3.1 Database Design ............................................................................………………... 13
+3.3.2 Flow Chart .......................................................................................………………. 14
+3.3.3 Use Case Diagram ............................................................................………………. 15
+3.3.4 Data Flow Diagram...........................................................................…………. 16-17
+3.3.5 Proposed Algorithm ........................................................................………………. 18
+3.4 Key Features ………..………………………………………………………………………………………………….…. 18
+3.5 Tools and Technologies.………………………………………………………………………………………………. 19
+Reference ………………………………………………………………………………………………………………………... 20
+List of Tables
+Table 2.1: Table for Hardware Requirements …………….………………………………..……………………… 5
+Table 2.2: Table for Software Requirements ……………………………………………….………………...… 5-6
+Table 2.3: COCOMO parameters …………….………………….……………………………………………………… 7
+Table 3.1: Tools and Technology Requirement.…………………………………………………………………. 19
+List of Figures
+Figure 2.1: Work Breakdown Structure ………………………………………………………………………………. 9
+Figure 2.2: Gantt Chart ………………………………………………………………………………………………………10
+Figure 3.1: Database Design ….…….….….…….……………………………………………………………………… 13
+Figure 3.2: Flow Chart ……………………………………………………………………………………………………… 14
+Figure 3.3: Use Case Diagram …………………………………………………………………………………………… 15
+Figure 3.4: Data Flow Diagram …….……………………………………………………………………………… 16-17
+1
+Chapter 1 Introduction
+1.1 Project Title
+Smart AI-Based Structural Bug Detection and Prevention System Using Machine Learning
+and LangGraph
+1.2 Introduction
+An AI-based system design that reviews the source code and the structure of the software
+projects and warns developers about the potential structural problems and suggests certain
+measures to prevent them.
+This system is different from most Debugging Tools that only catch syntax errors or crashes
+after the code runs. This aspects of the system examines how the code is organized: how the
+modules are dependent on each other, whether there are circular dependencies, coupling
+and cohesion [1][2], or components that are likely become hard to maintain.
+When the system scans a GitHub repository using GitHub OAuth, it runs static analysis and
+builds a dependency map[3] of the project. It then extracts useful metrics about
+architectural and design. A machine learning model then predict which part of the system
+are risky and likely to cause bugs in the future.
+In addition, this system also offers multiple subscription tiers such as Free tier and Pro tier,
+where the advanced feature will be unlocked through paid plans which is support by online
+payment integration using razorpay[9].
+1.3 Problem Statement
+Most the existing debugging tools are largely reactive which means they detect problems
+only after failure occur during testing or deployment phases. Manual architectural reviews
+are slow or time consuming, costly, and prone to human oversight.
+At present there is no comprehensive automated platform that:
+ Continuously analyses a software architecture.
+ Predicts future structural problems
+2
+ Identifying architectural anti patterns.
+ Provide clear and explainable, AI-driven recommendations.
+ Visualizes of how dependencies evolve over time.
+Hence a predictive and intelligent system is required to proactively monitor software design and help
+maintain quality of the software.
+1.4 Objective
+The main objective of this project is to design and develop an AI-driven based system that
+can predict the architectural risk, automatically analyse the structure of the software project
+and provide explainable recommendations to prevent future defects.
+Objectives:
+1. By performing statistical analysis on complete software repositories, in order to
+understand module structure, dependencies and design of the system.
+2. Extracting architectural and complexity metrics such as coupling and cohesion.
+3. To make a bug predicting model based on machine learning in order to avoid system
+failure.
+4. To detect anti-structural patterns like circular dependencies, God files, tight coupling
+and broken architectural layers.
+5. To design a LangGraph based reasoning system that identifies and detect risk and
+suggests actions which are recommended to developers.
+6. Visualizing project structure and predict risk levels using interactive graph and
+analytical dashboards.
+7. To integrate the system with GitHub repositories so that software project can be
+scanned automatically and generate reports.
+1.5 Scope and Limitation
+Scope
+1. Static structural analysis.
+2. Prediction using Machine-Learning
+3. AI driven architectural recommendation.
+4. GitHub repository integration.
+3
+5. Interactive visualization dashboard.
+Limitations
+1. The system does not analyse program execution or runtime failures.
+2. Syntax and compilation error are outside of scope for the current implementation.
+3. Machine learning prediction it depends strongly on the quality and diversity of
+training data.
+4. Language specific parser is needed, which limits immediate multiple programming
+language.
+5. Automatic code changes are not included in the current implementation.
+6. Performance may not be guaranteed for extremely large repositories without
+distributed processing.
+7. The System cannot remove any defects and it mainly focuses on lowering or reducing
+architectural risk.
+4
+Chapter 2
+Existing System and Feasibility Study
+2.1 Existing System Study
+Existing system
+1. linters and rule-based scanners[3] these are static analysis tools that primarily
+identify syntax error and simple bug by examining source code without executing it.
+2. Runtime debugging tools are design to only work after executing a program.
+3. Basic code quality platforms and only provide metrics like complexity or duplication
+but cannot predict future risk.
+4. Manual architecture review[1] which relies on experienced engineers but they are
+time consuming, depends on personal judgement, limited scalability due to hidden
+dependencies.
+5. Lack of tool support
+2.2 Technical Feasibility
+The project is technically feasible because of the availability of:
+1. There are reliable static libraries.
+2. Machine learning framework is well developed.
+3. Graph and visualization tools.
+4. Repository platform APIs.
+5. AI orchestration frameworks.
+5
+2.2.1 Hardware Requirements
+Table 2.1: Table for Hardware Requirements
+2.2.1 Software Requirements
+Components Developer User
+RAM Minimum 8 GB Minimum 4 GB
+Processor Intel i5 / AMD Ryzen 5 or above Intel i3 / AMD Ryzen 3 or above
+Storage 256 GB SSD or higher
+128 GB free space
+GPU For Machine Learning Training Not required
+Internet Stable Connection Stable Connection
+Category Software
+Operating System Windows 10 / Windows 11
+Frontend ReactJS
+Backend FastAPI
+AI/ML Python, Scikit-learn, LangGraph, NetworkX
+Database MongoDB, Neo4j
+Payment Gateway Razorpay
+Developer
+6
+Table 2.2: Table for Software Requirements
+2.3 Operational Feasibility
+The system is useful for:
+1. Software developers
+2. Testing teams
+3. Operations and deployment teams
+4. Project managers
+Its web-based UI and visual dashboards make it easy to use and require very little training.
+2.4 Economic Feasibility
+AI-based structural bug detection system project is economically feasible because:
+ Development tools are mostly open source.
+ Cloud servers can be scaled on demand.
+ Subscription gateway can create revenue.
+Cost
+ Development time and tools.
+ Cloud server.
+ Maintenance and updates.
+Benefits
+ Save Developers time
+ It can reduce long term maintenance cost for the companies.
+ Improves software quality and reliability
+Category Software
+Operating System Windows 10 / Windows 11
+Web Browser Chrome / Edge / Firefox
+Internet Required
+User
+7
+The project uses mostly free tools, needs limited initial cost, and revenue can be earned
+through paid plans in the future, where the users can also be benefit by avoiding costly
+future bugs.
+2.4.1 COCOMO Model
+The calculation of the using the formula is as follows:
+Effort (E) = a * (KLOC)b
+Development Time(D) = c * (Effort)d
+Where,
+• KLOC = Thousand Lines of Code
+• a, b, c, d are constant values for the basic model for different system.
+• E = Effort in Person-Months
+Table 2.3: COCOMO Parameters
+Mode A B C D
+Organic 2.4 1.05 2.5 0.38
+Semi-detached 3.0 1.12 2.5 0.35
+Embedded 3.6 1.2 2.5 0.35
+This project type is a Semi-detached Project, for 1600 lines of code, KLOC 5
+Now the basic COCOMO equation of our project is,
+Effort Applied (E) = 3.0 * (1.6)1.12
+= 5 person-months
+Development Time (D) = 2.5 * (5)0.35
+= 4.4 months
+From the above calculation, the effort is approximately 5 person-months. Since the
+project is to be completed within a planned duration of 5 months, the development time is
+8
+approximately 4.4 months. Therefore, the project is considered feasible within the given
+schedule.
+2.5 Schedule Feasibility
+Schedule feasibility evaluates that whether the proposed system can be completed within
+the academic time frame. The Work Breakdown Structure (WBS) divides the project into
+clear phases such as design, static analysis implementation, machine learning model
+development, AI reasoning integration, backend services, frontend visualization, testing and
+documentation.
+A Gantt Chart is use to spread these activities across the project timeline and shows
+overlapping phases to support iterative development. Extra time is kept for testing and
+documentation, and the use of open-source tools and reusable libraries, reduces schedule
+risk.
+9
+2.5.1 Work Breakdown Structure
+Figure 2.1: Work Breakdown Structure of Smart AI-Based Structural Bug Detection and
+Prevention System Using Machine Learning and LangGraph
+10
+2.5.2 Gantt Chart
+Figure 2.2: Gantt Chart of Smart AI-Based Structural Bug Detection and Prevention System
+Using Machine Learning and LangGraph
+11
+CHAPTER 3
+Proposed System /System Design
+3.1 System Overview
+The proposed system is a web-based intelligent platform that uses machine learning and
+graph-based analysis to assess the structural quality of software projects and forecast
+possible architectural risks. Developers can supply a GitHub repository link or upload a
+project folder using the system. After receiving the repository, the system uses static
+analysis[3] to look at how the source code is organized and find module dependencies.
+In order to extract architectural metrics like module size, coupling, cohesion, fan-in, and fan-
+out, the analysis engine builds a dependency graph of the project. A machine learning
+model analyses these features to forecast the likelihood of future structural flaws in various
+system modules [3].
+A LangGraph[8]-based reasoning component evaluates the anticipated risk and offers
+explanations and preventive suggestions to improve interpretability. The developers receives
+the results via an interactive web dashboard that displays dependency graphs, risk levels,
+and recommendations. These are developed using React [4], while backend services
+responsible for analysis and processing are implemented using FastAPI [5].
+MongoDB and Neo4j databases [6][7] are used by the system to store user data, scan results,
+and dependency information. This system overall helps developers proactively detect
+structural issues in software architecture and take corrective measures before they lead to
+major defects.
+3.2 Functional Module
+The Proposed System is made up of a number of function modules that cooperates to carry
+out the risk prediction, recommendation generation, and repository analysis.
+Modules
+1. User Authentication:
+12
+User login and registration are handled by this module.
+It saves user data in the database and validates user credentials.
+Additionally, it controls subscription status and user sessions.
+2. Project Scanner:
+The User can either Upload the project folder or a link to a GitHub repository.
+It finds all of the project's modules, packages, classes, and directories by scanning
+every source file.
+3. Engine for Static Analysis:
+The static analysis engine studies the structure of the source code without executing
+it. It identifies relationships between modules and detects architectural problems
+such as tight coupling and circular dependencies.
+4. Feature Extratcion:
+This module transform the raw analysis results into measurable metrics that can be
+used by the machine learning model.
+5. Risk Prediction for Machine Learning:
+This module checks the evaluated extracted features and calculates the likehood of
+structural error in each project module using a trained machine learning model.
+6. AI Reasoning:
+This module interprets the prediction results and give and explanation for the risk
+that had been detected.
+7. Visualize and Reporting:
+This module provides the results to the users through the dashboard and it also
+provide graph and the risk be download for the future analyse.
+8. Data Storage Module:
+This module stores user information, project scans, and analysis results.
+MongoDB is used for storing data and Neo4j stores dependency graph of the
+software system.
+13
+3.3 System Design
+ 3.3.1 Database Design
+Figure 3.1: Database Design of Smart AI-Based Structural Bug Detection and Prevention
+System Using Machine Learning and LangGraph
+
+14
+3.3.2 Flowchart
+Figure 3.2: Flow Chart of Smart AI-Based Structural Bug Detection and Prevention
+System Using Machine Learning and LangGraph
+15
+3.3.3 Use Case Diagram
+Figure 3.3: Use Case Diagram of Smart AI-Based Structural Bug Detection and Prevention
+System Using Machine Learning and LangGraph
+3.3.4 Data Flow Diagram
+1. Level 0
+16
+2. Level 1
+3. Level 2
+
+17
+Figure 3.4: Use Case Diagram of Smart AI-Based Structural Bug Detection and Prevention
+System Using Machine Learning and LangGraph
+18
+3.3.5 Proposed Algorithm
+Steps and Process
+1. Start the system.
+2. User logs into the systems.
+3. User can upload a project or connects to a GitHub repository.
+4. The System scans all source code files.
+5. The system identifies modules in the project.
+6. Static analysis is performed to detect dependencies between modules.
+7. Architectural metrics such as coupling and fan-in/fan-out are calculated.
+8. These metrics are sent to the machine learning model.
+9. The model predicts the risk level in each module.
+10.The LangGraph reasoning engine analyzes the prediction results.
+11. The system generates explanations and suggest improvement.
+12. The results are then stored in the database.
+13. The dashboard displays risk analysis.
+14. the user can download the report.
+15. End the process.
+3.3 Features
+ Detection of architectural risk
+ Circular dependency identification
+ Risk heat maps
+ Tracking changes in system structure over time
+ AI generated suggestions
+ Interactive graphs
+ Subscription based access
+19
+3.4 Tools and Technologies
+Table 3.1: Tools and Technologies Requirement
+Frontend ReactJS
+Backend FastAPI
+AI/ML Python, Scikit-learn, LangGraph, NetworkX
+Database MongoDB, Neo4j
+Payment Gateway Razorpay
+20
+References
+[1] Gamma, E., Helm, R., Johnson, R., & Vlissides, J. (1994). Design patterns: Elements of
+reusable object-oriented software. Addison-Wesley.
+[2] Fowler, M. (2018). Refactoring: Improving the design of existing code (2nd ed.). Addison-
+Wesley.
+[3] Kruse, R. L. (2021). Static analysis: How and why to analyze your code. Springer.
+[4] Meta Platforms, Inc. (n.d.). React: A JavaScript library for building user interfaces.
+https://react.dev/learn
+[5] FastAPI. (n.d.). FastAPI documentation. https://fastapi.tiangolo.com/
+[6] MongoDB, Inc. (n.d.). MongoDB documentation. https://www.mongodb.com/docs/
+[7] Neo4j, Inc. (n.d.). Neo4j documentation. https://neo4j.com/docs/
+[8] LangChain. (n.d.). LangGraph overview.
+https://docs.langchain.com/oss/python/langgraph/overview
+[9] Razorpay. (n.d.). Razorpay documentation. https://razorpay.com/docs/

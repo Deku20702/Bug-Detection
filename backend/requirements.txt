@@ -10,5 +10,8 @@ passlib
 python-multipart
 httpx
 pytest
-razorpay
 email-validator>=2.0.0
+joblib
+scikit-learn
+langgraph
+razorpay

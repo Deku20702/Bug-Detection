@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, health, payments, projects, scans
+from app.routers import auth, health, projects, scans
 
 app = FastAPI(title="Structural Bug Detection API")
 
@@ -14,4 +14,6 @@ app.add_middleware(
 )
 
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
-# ... include other routers
+app.include_router(health.router, prefix="/health", tags=["Health"])
+app.include_router(projects.router, prefix="/projects", tags=["Projects"])
+app.include_router(scans.router, prefix="/scans", tags=["Scans"])

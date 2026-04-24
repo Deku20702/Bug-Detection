@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import client, { setAuthToken } from '../../api';
 import toast from 'react-hot-toast';
-import { useGoogleLogin } from '@react-oauth/google'; // Import the hook
+import { useGoogleLogin } from '@react-oauth/google';
 
 const LoginScreen = ({ onLoginSuccess }) => {
   const [auth, setAuth] = useState({ email: "", password: "" });
@@ -11,7 +11,6 @@ const LoginScreen = ({ onLoginSuccess }) => {
   const loginWithGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        // This sends the Google access_token to your FastAPI backend
         const response = await client.post("/auth/google-login", {
           token: tokenResponse.access_token
         });
@@ -89,7 +88,6 @@ const LoginScreen = ({ onLoginSuccess }) => {
             {authMode === "login" ? "Sign in" : "Register"}
           </button>
 
-          {/* New Google Login Button */}
           <div className="auth-divider" style={{ margin: '20px 0', textAlign: 'center', color: '#666' }}>OR</div>
           
           <button 
@@ -100,9 +98,9 @@ const LoginScreen = ({ onLoginSuccess }) => {
             Continue with Google
           </button>
           
-          <div className="auth-toggle-wrap">
+          <div className="auth-toggle-wrap" style={{ marginTop: '20px', textAlign: 'center' }}>
             {authMode === "login" ? "No account? " : "Already have an account? "}
-            <button className="auth-toggle-btn" onClick={() => setAuthMode(authMode === "login" ? "register" : "login")}>
+            <button className="auth-toggle-btn" onClick={() => setAuthMode(authMode === "login" ? "register" : "login")} style={{ background: 'none', border: 'none', color: '#0066ff', cursor: 'pointer', textDecoration: 'underline' }}>
               {authMode === "login" ? "Create one" : "Sign in instead"}
             </button>
           </div>

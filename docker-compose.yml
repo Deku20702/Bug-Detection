@@ -1,21 +1,4 @@
 services:
-  mongo:
-    image: mongo:7
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
-
-  neo4j:
-    image: neo4j:5.24
-    environment:
-      NEO4J_AUTH: neo4j/password
-    ports:
-      - "7687:7687"
-      - "7474:7474"
-    volumes:
-      - neo4j_data:/data
-
   backend:
     image: python:3.11-slim
     working_dir: /app
@@ -23,12 +6,7 @@ services:
       - ./backend:/app
     command: sh -c "pip install -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     environment:
-      storage_mode: "production"  
-      mongodb_uri: mongodb://mongo:27017
-      mongodb_db: structural_bug_db
-      neo4j_uri: bolt://neo4j:7687
-      neo4j_user: neo4j
-      neo4j_password: password
+      storage_mode: "production"
       jwt_secret: change-me
     ports:
       - "8000:8000"
@@ -41,14 +19,30 @@ services:
     working_dir: /app
     volumes:
       - ./frontend:/app
-      - /app/node_modules   # <--- THIS STOPS THE SIGSEGV CRASH
+      - /app/node_modules
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
     ports:
       - "5173:5173"
     depends_on:
       - backend
 
-# Make sure this is all the way to the left edge!
+  mongo:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  neo4j:
+    image: neo4j:5.12
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/password
+    volumes:
+      - neo4j_data:/data
+
 volumes:
   mongo_data:
   neo4j_data:

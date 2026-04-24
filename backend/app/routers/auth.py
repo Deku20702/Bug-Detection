@@ -35,3 +35,45 @@ async def google_login(payload: dict):
         })
 
     return AuthResponse(access_token=create_access_token(email))
+
+from app.schemas import RegisterRequest, LoginRequest
+from app.security import hash_password, verify_password
+
+@router.post("/register", response_model=AuthResponse)
+async def register(payload: RegisterRequest):
+    users = mongo_db["users"]
+    if users.find_one({"email": payload.email}):
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    users.insert_one({
+        "name": payload.email.split("@")[0],
+        "email": payload.email,
+        "password_hash": hash_password(payload.password),
+        "role": "free",
+        "created_at": datetime.now(timezone.utc)
+    })
+    
+    return AuthResponse(access_token=create_access_token(payload.email))
+
+@router.post("/login", response_model=AuthResponse)
+async def login(payload: LoginRequest):
+    users = mongo_db["users"]
+    user = users.find_one({"email": payload.email})
+    
+    if not user or not user.get("password_hash") or not verify_password(payload.password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+        
+    return AuthResponse(access_token=create_access_token(payload.email))
+
+from fastapi import Depends
+from fastapi.security import HTTPAuthorizationCredentials
+from app.deps import auth_scheme
+
+@router.post("/logout")
+async def logout(credentials: HTTPAuthorizationCredentials = Depends(auth_scheme)):
+    token = credentials.credentials
+    mongo_db["token_blacklist"].insert_one({
+        "token": token,
+        "revoked_at": datetime.now(timezone.utc)
+    })
+    return {"detail": "Successfully logged out"}
