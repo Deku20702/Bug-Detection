@@ -1,84 +1,204 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import client, { setAuthToken } from '../../api';
 import toast from 'react-hot-toast';
 
 const LoginScreen = ({ onLoginSuccess }) => {
+
   const [auth, setAuth] = useState({ email: "", password: "" });
   const [authMode, setAuthMode] = useState("login");
+  const [showPassword, setShowPassword] = useState(false); // ✅ NEW
+
+  // GOOGLE LOGIN HANDLER
+  const handleGoogleResponse = async (response) => {
+    try {
+      const res = await client.post("/auth/google", {
+        token: response.credential
+      });
+
+      setAuthToken(res.data.access_token);
+      onLoginSuccess(res.data.access_token, res.data.email );
+
+      toast.success("Signed in with Google 🚀");
+    } catch (error) {
+      toast.error("Google authentication failed.");
+    }
+  };
+
+  useEffect(() => {
+  /* global google */
+
+  const initializeGoogle = () => {
+    if (window.google) {
+      google.accounts.id.initialize({
+        client_id: "392591290867-vk0864ia1h6k968969jmdsut1jd538dc.apps.googleusercontent.com",
+        callback: handleGoogleResponse
+      });
+
+      google.accounts.id.renderButton(
+        document.getElementById("googleBtn"),
+        {
+          theme: "outline",
+          size: "large",
+          width: "100%"
+        }
+      );
+    }
+  };
+
+  // Load Google script
+  if (!document.getElementById("google-jssdk")) {
+    const script = document.createElement("script");
+    script.id = "google-jssdk";
+    script.src = "https://accounts.google.com/gsi/client";
+    script.onload = initializeGoogle;
+    document.body.appendChild(script);
+  } else {
+    initializeGoogle();
+  }
+}, []);
 
   const handleAuthSubmit = async () => {
+
     if (!auth.email || !auth.password) {
       toast.error("Please fill in all fields.");
       return;
     }
+
+    // ✅ Password length check
+    if (auth.password.length < 8) {
+      toast.error("Password must be at least 8 characters.");
+      return;
+    }
+
     try {
       const endpoint = authMode === "register" ? "/auth/register" : "/auth/login";
+
       const response = await client.post(endpoint, auth);
-      
+
       setAuthToken(response.data.access_token);
       onLoginSuccess(response.data.access_token, auth.email);
-      
-      toast.success(authMode === "register" ? "Account created!" : "Signed in successfully.");
+
+      toast.success(authMode === "register"
+        ? "Account created!"
+        : "Signed in successfully."
+      );
+
     } catch (error) {
       toast.error(error?.response?.data?.detail || "Authentication failed. Check credentials.");
     }
   };
 
-  const authImage = authMode === "login" 
-    ? "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1000" 
+  const authImage = authMode === "login"
+    ? "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1000"
     : "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&q=80&w=1000";
 
   return (
     <div className="auth-page">
-      <div className="auth-image-side" style={{ backgroundImage: `url(${authImage})` }}>
+
+      <div
+        className="auth-image-side"
+        style={{ backgroundImage: `url(${authImage})` }}
+      >
         <div className="auth-image-overlay">
           <div className="auth-branding">
-            <div className="tag"><div className="tag-dot"></div>AI Architecture Intelligence</div>
+            <div className="tag">
+              <div className="tag-dot"></div>
+              AI Architecture Intelligence
+            </div>
             <h1>Identify structural rot before it breaks production.</h1>
           </div>
         </div>
       </div>
-      
+
       <div className="auth-form-side">
         <div className="auth-card">
+
           <h2>{authMode === "login" ? "Welcome back" : "Create account"}</h2>
+
           <p className="auth-sub">
-            {authMode === "login" ? "Sign in to start scanning repositories." : "Join to analyze architecture risks."}
+            {authMode === "login"
+              ? "Sign in to start scanning repositories."
+              : "Join to analyze architecture risks."
+            }
           </p>
-          
+
+          {/* EMAIL */}
           <div className="auth-field">
-            <input 
-              type="email" 
-              placeholder="Email address" 
-              value={auth.email} 
-              onChange={e => setAuth({...auth, email: e.target.value})} 
+            <input
+              type="email"
+              placeholder="Email address"
+              value={auth.email}
+              onChange={e => setAuth({ ...auth, email: e.target.value })}
               onKeyDown={e => e.key === 'Enter' && handleAuthSubmit()}
             />
           </div>
-          <div className="auth-field">
-            <input 
-              type="password" 
-              placeholder="Password" 
-              value={auth.password} 
-              onChange={e => setAuth({...auth, password: e.target.value})} 
+
+          {/* PASSWORD WITH TOGGLE */}
+          <div className="auth-field" style={{ position: 'relative' }}>
+            <input
+              type={showPassword ? "text" : "password"}  // ✅ toggle
+              placeholder="Password (min 8 characters)"
+              value={auth.password}
+              onChange={e => setAuth({ ...auth, password: e.target.value })}
               onKeyDown={e => e.key === 'Enter' && handleAuthSubmit()}
+              style={{ paddingRight: '40px' }}
             />
+
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '16px'
+              }}
+            >
+              {showPassword ? "👁️" : "🙈"}
+            </button>
           </div>
-          
-          <button className="auth-btn" onClick={handleAuthSubmit}>
+
+          {/* BUTTON */}
+          <button
+            className="auth-btn"
+            onClick={handleAuthSubmit}
+            disabled={!auth.email || auth.password.length < 8} // ✅ bonus UX
+          >
             {authMode === "login" ? "Sign in" : "Register"}
           </button>
-          
+
+
+            {/* Divider */}
+          <div style={{ margin: '1rem 0', textAlign: 'center', color: '#666' }}>
+            or
+          </div>
+
+          {/* Google Button */}
+          <div id="googleBtn" style={{ marginBottom: '1rem' }}></div>
+
+
+          {/* TOGGLE LOGIN/REGISTER */}
           <div className="auth-toggle-wrap">
             {authMode === "login" ? "No account? " : "Already have an account? "}
-            <button className="auth-toggle-btn" onClick={() => setAuthMode(authMode === "login" ? "register" : "login")}>
+            <button
+              className="auth-toggle-btn"
+              onClick={() =>
+                setAuthMode(authMode === "login" ? "register" : "login")
+              }
+            >
               {authMode === "login" ? "Create one" : "Sign in instead"}
             </button>
           </div>
+
         </div>
       </div>
     </div>
   );
 };
+
 
 export default LoginScreen;

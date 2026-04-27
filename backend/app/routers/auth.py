@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -7,9 +8,17 @@ from app.deps import get_current_user_email
 from app.schemas import AuthResponse, LoginRequest, RegisterRequest
 from app.security import create_access_token, hash_password, verify_password
 
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
+from dotenv import load_dotenv
+load_dotenv()
+
 router = APIRouter()
 
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 
+#register
 @router.post("/register", response_model=AuthResponse)
 def register(payload: RegisterRequest) -> AuthResponse:
     users = mongo_db["users"]
@@ -27,7 +36,7 @@ def register(payload: RegisterRequest) -> AuthResponse:
     token = create_access_token(payload.email)
     return AuthResponse(access_token=token)
 
-
+#login
 @router.post("/login", response_model=AuthResponse)
 def login(payload: LoginRequest) -> AuthResponse:
     user = mongo_db["users"].find_one({"email": payload.email})
@@ -47,9 +56,13 @@ def login(payload: LoginRequest) -> AuthResponse:
     if not user or not verify_password(payload.password, user["password_hash"]):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     token = create_access_token(payload.email)
-    return AuthResponse(access_token=token)
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "email": email
+    }
 
-
+#current user
 @router.get("/me")
 def me(email: str = Depends(get_current_user_email)) -> dict:
     user = mongo_db["users"].find_one({"email": email}, {"password_hash": 0})
@@ -58,3 +71,40 @@ def me(email: str = Depends(get_current_user_email)) -> dict:
     user["id"] = str(user.pop("_id"))
     return user
 
+#google login
+@router.post("/google", response_model=AuthResponse)
+def google_auth(payload: dict) -> AuthResponse:
+    token = payload.get("token")
+
+    if not token:
+        raise HTTPException(status_code=400, detail="Token missing")
+
+    try:
+        idinfo = id_token.verify_oauth2_token(
+            token,
+            requests.Request(),
+            GOOGLE_CLIENT_ID
+        )
+
+        email = idinfo["email"]
+
+        users = mongo_db["users"]
+        user = users.find_one({"email": email})
+
+        # Create user if doesn't exist
+        if not user:
+            users.insert_one(
+                {
+                    "name": email.split("@")[0],
+                    "email": email,
+                    "password_hash": None,
+                    "role": "free",
+                    "created_at": datetime.now(timezone.utc),
+                }
+            )
+
+        access_token = create_access_token(email)
+        return AuthResponse(access_token=access_token)
+
+    except ValueError:
+        raise HTTPException(status_code=401, detail="Invalid Google token")
