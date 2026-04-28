@@ -72,7 +72,8 @@ body {
 }
 
 .auth-card {
-  width: 100%; max-width: 400px; background: var(--color-background-secondary);
+  width: 100%; max-width: 400px; background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  backdrop-filter: blur(10px);
   border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg);
   padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
   animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1);
