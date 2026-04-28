@@ -1,34 +1,67 @@
-import math
+import pandas as pd
+import xgboost as xgb
+import joblib
+import os
 
 
-def sigmoid(value: float) -> float:
-    return 1 / (1 + math.exp(-value))
+def main():
+    # 📂 1. Load dataset
+    DATA_PATH = os.path.join(os.path.dirname(__file__), "software_defect_prediction_dataset.csv")
+    df = pd.read_csv(DATA_PATH)
 
+    print(f"Dataset loaded with shape: {df.shape}")
 
-def score_module(feature_row: list[float]) -> float:
-    in_degree, out_degree, betweenness, cycle_count, loc_proxy = feature_row
-    linear_score = (
-        (0.08 * in_degree)
-        + (0.09 * out_degree)
-        + (1.7 * betweenness)
-        + (0.25 * cycle_count)
-        + (0.0035 * loc_proxy)
-        - 1.5
-    )
-    return sigmoid(linear_score)
-
-
-def main() -> None:
-    sample_rows = [
-        [0, 1, 0.0, 0, 20],
-        [1, 2, 0.01, 0, 30],
-        [4, 7, 0.13, 1, 120],
-        [7, 10, 0.25, 3, 220],
+    # 🧠 2. Define features (ALL 22)
+    features = [
+        'lines_of_code',
+        'cyclomatic_complexity',
+        'num_functions',
+        'num_classes',
+        'comment_density',
+        'code_churn',
+        'developer_experience_years',
+        'num_developers',
+        'commit_frequency',
+        'bug_fix_commits',
+        'past_defects',
+        'test_coverage',
+        'duplication_percentage',
+        'avg_function_length',
+        'depth_of_inheritance',
+        'response_for_class',
+        'coupling_between_objects',
+        'lack_of_cohesion',   # ⚠️ make sure spelling matches CSV
+        'build_failures',
+        'static_analysis_warnings',
+        'security_vulnerabilities',
+        'performance_issues'
     ]
-    print("Heuristic risk model scores:")
-    for row in sample_rows:
-        print(f"features={row} -> risk={round(score_module(row), 4)}")
-    print("No binary model artifact required for this environment.")
+
+    target = 'defect'
+
+    # 🧪 3. Split features and target
+    X = df[features]
+    y = df[target]
+
+    print("Features and target prepared")
+
+    # ⚙️ 4. Initialize XGBoost model
+    model = xgb.XGBClassifier(
+        n_estimators=100,
+        learning_rate=0.1,
+        max_depth=6,
+        use_label_encoder=False,
+        eval_metric='logloss'
+    )
+
+    print("Training model... ⏳")
+    model.fit(X, y)
+
+    # 💾 5. Save model
+    MODEL_PATH = os.path.join(os.path.dirname(__file__), "defect_model_xgboost.pkl")
+    joblib.dump(model, MODEL_PATH)
+
+    print(f"✅ Model saved at: {MODEL_PATH}")
 
 
 if __name__ == "__main__":

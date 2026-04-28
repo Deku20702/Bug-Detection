@@ -9,7 +9,7 @@ from app.deps import get_current_user_email
 from app.schemas import ScanStartRequest
 from app.services.analyzer import build_dependency_graph, detect_anti_patterns
 from app.services.features import extract_features
-from app.services.ml import predict_module_risks
+from app.services.ml import predict_defects
 from app.services.repo_fetch import prepare_repo_path
 from app.services.reasoning import run_langgraph_reasoning
 
@@ -58,7 +58,7 @@ def start_scan(payload: ScanStartRequest, email: str = Depends(get_current_user_
     graph, analyzer_stats = build_dependency_graph(repo_path)
     anti_patterns = detect_anti_patterns(graph)
     features = extract_features(graph)
-    risks = predict_module_risks(features)
+    risks = predict_defects(features)
     recommendations = run_langgraph_reasoning(risks, anti_patterns)
     
     # --- NEW CODE: INJECT CODE EVIDENCE INTO RECOMMENDATIONS ---
