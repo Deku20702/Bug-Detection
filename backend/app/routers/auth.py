@@ -53,14 +53,13 @@ def login(payload: LoginRequest) -> AuthResponse:
             }
         )
         user = mongo_db["users"].find_one({"email": payload.email})
+
     if not user or not verify_password(payload.password, user["password_hash"]):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     token = create_access_token(payload.email)
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "email": email
-    }
+    
+    # Return as an AuthResponse object
+    return AuthResponse(access_token=token)
 
 #current user
 @router.get("/me")
