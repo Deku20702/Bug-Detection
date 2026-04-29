@@ -38,13 +38,13 @@ def extract_features(graph: nx.DiGraph) -> list[dict]:
 
             # 🔥 REAL graph-based features
             lines_of_code=100 + graph.degree(node) * 10,
-            cyclomatic_complexity=1 + graph.out_degree(node),
+            cyclomatic_complexity=1 + graph.out_degree(node) * 1.5,
             num_functions=graph.out_degree(node),
             num_classes=1,
 
             comment_density=0.2,
 
-            code_churn=graph.in_degree(node) * 5,
+            code_churn=graph.in_degree(node) * 10,
             developer_experience_years=2.0,
             num_developers=max(1, graph.in_degree(node)),
 
@@ -61,7 +61,7 @@ def extract_features(graph: nx.DiGraph) -> list[dict]:
 
             response_for_class=graph.degree(node),
 
-            coupling_between_objects=graph.degree(node),
+            coupling_between_objects=graph.degree(node) * 3,
 
             lack_of_cohesion=0.3,
 
