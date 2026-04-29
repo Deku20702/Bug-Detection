@@ -17,3 +17,8 @@ google-auth
 xgboost
 joblib
 pandas
+
+langchain-ollama
+langchain-community
+langchain
+langgraph

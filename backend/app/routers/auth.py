@@ -2,6 +2,7 @@ import os
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
 
 from app.database import mongo_db
 from app.deps import get_current_user_email
@@ -18,59 +19,120 @@ router = APIRouter()
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 
-#register
+# -----------------------------
+# SCHEMA
+# -----------------------------
+class RepoRequest(BaseModel):
+    repo_url: str
+
+
+# -----------------------------
+# REGISTER
+# -----------------------------
 @router.post("/register", response_model=AuthResponse)
 def register(payload: RegisterRequest) -> AuthResponse:
     users = mongo_db["users"]
+
     if users.find_one({"email": payload.email}):
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exists")
-    users.insert_one(
-        {
+        raise HTTPException(status_code=409, detail="Email already exists")
+
+    users.insert_one({
+        "name": payload.email.split("@")[0],
+        "email": payload.email,
+        "password_hash": hash_password(payload.password),
+        "role": "free",
+        "created_at": datetime.now(timezone.utc),
+        "recent_repos": []
+    })
+
+    token = create_access_token(payload.email)
+    return AuthResponse(access_token=token)
+
+
+# -----------------------------
+# LOGIN
+# -----------------------------
+@router.post("/login", response_model=AuthResponse)
+def login(payload: LoginRequest) -> AuthResponse:
+    users = mongo_db["users"]
+    user = users.find_one({"email": payload.email})
+
+    # Auto-create user (demo mode)
+    if not user:
+        users.insert_one({
             "name": payload.email.split("@")[0],
             "email": payload.email,
             "password_hash": hash_password(payload.password),
             "role": "free",
             "created_at": datetime.now(timezone.utc),
-        }
+            "recent_repos": []
+        })
+        user = users.find_one({"email": payload.email})
+
+    if not verify_password(payload.password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    token = create_access_token(payload.email)
+    return AuthResponse(access_token=token)
+
+
+# -----------------------------
+# GET RECENT REPOS
+# -----------------------------
+@router.get("/recent-repos")
+def get_recent_repos(email: str = Depends(get_current_user_email)):
+    user = mongo_db["users"].find_one({"email": email})
+    return user.get("recent_repos", []) if user else []
+
+
+# -----------------------------
+# SAVE RECENT REPO
+# -----------------------------
+@router.post("/recent-repos")
+def save_recent_repo(payload: RepoRequest, email: str = Depends(get_current_user_email)):
+    users = mongo_db["users"]
+
+    user = users.find_one({"email": email}) or {}
+    repos = list(user.get("recent_repos", []))
+
+    repo_url = payload.repo_url
+
+    # Remove duplicate
+    if repo_url in repos:
+        repos.remove(repo_url)
+
+    # Add newest on top
+    repos.insert(0, repo_url)
+
+    # Limit to 5
+    repos = repos[:5]
+
+    users.update_one(
+        {"email": email},
+        {"$set": {"recent_repos": repos}},
+        upsert=True
     )
-    token = create_access_token(payload.email)
-    return AuthResponse(access_token=token)
 
-#login
-@router.post("/login", response_model=AuthResponse)
-def login(payload: LoginRequest) -> AuthResponse:
-    user = mongo_db["users"].find_one({"email": payload.email})
-    if not user:
-        # Demo-friendly flow: allow direct login by auto-creating user
-        # if account does not exist yet.
-        mongo_db["users"].insert_one(
-            {
-                "name": payload.email.split("@")[0],
-                "email": payload.email,
-                "password_hash": hash_password(payload.password),
-                "role": "free",
-                "created_at": datetime.now(timezone.utc),
-            }
-        )
-        user = mongo_db["users"].find_one({"email": payload.email})
+    return {"message": "saved"}
 
-    if not user or not verify_password(payload.password, user["password_hash"]):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-    token = create_access_token(payload.email)
-    
-    # Return as an AuthResponse object
-    return AuthResponse(access_token=token)
 
-#current user
+# -----------------------------
+# CURRENT USER
+# -----------------------------
 @router.get("/me")
 def me(email: str = Depends(get_current_user_email)) -> dict:
     user = mongo_db["users"].find_one({"email": email}, {"password_hash": 0})
+
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(status_code=404, detail="User not found")
+
     user["id"] = str(user.pop("_id"))
     return user
 
-#google login
+
+# -----------------------------
+# GOOGLE LOGIN
+# -----------------------------
 @router.post("/google", response_model=AuthResponse)
 def google_auth(payload: dict) -> AuthResponse:
     token = payload.get("token")
@@ -86,21 +148,19 @@ def google_auth(payload: dict) -> AuthResponse:
         )
 
         email = idinfo["email"]
-
         users = mongo_db["users"]
+
         user = users.find_one({"email": email})
 
-        # Create user if doesn't exist
         if not user:
-            users.insert_one(
-                {
-                    "name": email.split("@")[0],
-                    "email": email,
-                    "password_hash": None,
-                    "role": "free",
-                    "created_at": datetime.now(timezone.utc),
-                }
-            )
+            users.insert_one({
+                "name": email.split("@")[0],
+                "email": email,
+                "password_hash": None,
+                "role": "free",
+                "created_at": datetime.now(timezone.utc),
+                "recent_repos": []
+            })
 
         access_token = create_access_token(email)
         return AuthResponse(access_token=access_token)

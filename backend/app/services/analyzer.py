@@ -23,7 +23,7 @@ def parse_python_imports(file_path: Path) -> tuple[list[dict], bool]:
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for name in node.names:
-                imported_module = name.name.split(".")[0]
+                imported_module = name.name
                 line_num = getattr(node, 'lineno', 1)
                 # Arrays are 0-indexed, AST lineno is 1-indexed
                 code_snippet = lines[line_num - 1].strip() if line_num <= len(lines) else ""
@@ -35,7 +35,7 @@ def parse_python_imports(file_path: Path) -> tuple[list[dict], bool]:
                 })
                 
         elif isinstance(node, ast.ImportFrom) and node.module:
-            imported_module = node.module.split(".")[0]
+            imported_module = node.module
             line_num = getattr(node, 'lineno', 1)
             code_snippet = lines[line_num - 1].strip() if line_num <= len(lines) else ""
             
@@ -72,8 +72,10 @@ def build_dependency_graph(repo_path: Path) -> tuple[nx.DiGraph, dict[str, int]]
         for imp in imports_data:
             imported_name = imp["module"]
             # Find matching local modules
-            matches = [m for m in modules if m.endswith(imported_name) or m == imported_name]
-            
+            matches = [
+                m for m in modules
+                if m.split(".")[-1] == imported_name or imported_name in m
+            ]            
             for target in matches:
                 if target != module:
                     # If edge already exists, append the new evidence (multiple imports in same file)

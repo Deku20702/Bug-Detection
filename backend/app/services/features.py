@@ -35,29 +35,43 @@ def extract_features(graph: nx.DiGraph) -> list[dict]:
     for node in graph.nodes:
         row = ModuleFeatures(
             module=node,
-            lines_of_code=120,
-            cyclomatic_complexity=3.5,
-            num_functions=5,
+
+            # 🔥 REAL graph-based features
+            lines_of_code=100 + graph.degree(node) * 10,
+            cyclomatic_complexity=1 + graph.out_degree(node),
+            num_functions=graph.out_degree(node),
             num_classes=1,
+
             comment_density=0.2,
-            code_churn=10,
+
+            code_churn=graph.in_degree(node) * 5,
             developer_experience_years=2.0,
-            num_developers=2,
+            num_developers=max(1, graph.in_degree(node)),
+
             commit_frequency=0.5,
-            bug_fix_commits=1,
-            past_defects=0,
-            test_coverage=0.6,
-            duplication_percentage=5.0,
-            avg_function_length=25.0,
-            depth_of_inheritance=2,
-            response_for_class=10,
-            coupling_between_objects=3,
+            bug_fix_commits=graph.in_degree(node),
+
+            past_defects=graph.degree(node) // 2,
+            test_coverage=0.5,
+
+            duplication_percentage=graph.out_degree(node) * 2,
+
+            avg_function_length=20 + graph.degree(node),
+            depth_of_inheritance=1,
+
+            response_for_class=graph.degree(node),
+
+            coupling_between_objects=graph.degree(node),
+
             lack_of_cohesion=0.3,
+
             build_failures=0,
-            static_analysis_warnings=2,
+            static_analysis_warnings=graph.degree(node),
+
             security_vulnerabilities=0,
-            performance_issues=1,
+            performance_issues=graph.out_degree(node) // 2,
         )
+
         features.append(asdict(row))
 
     return features

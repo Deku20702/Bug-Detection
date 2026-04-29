@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect} from "react";
+import React, { useState, useRef, useEffect } from "react";
 import client from "../../api";
 import toast from "react-hot-toast";
 
@@ -11,7 +11,6 @@ import ModuleTable from "./ModuleTable";
 import SidePanel from "./SidePanel";
 import SkeletonDashboard from "./SkeletonDashboard";
 import RightPanel from "./RightPanel";
-
 
 const Dashboard = ({ userName, initials, handleLogout }) => {
   const [repoUrl, setRepoUrl] = useState("");
@@ -26,17 +25,22 @@ const Dashboard = ({ userName, initials, handleLogout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const inputRef = useRef(null);
-  
+
+  // ✅ LOAD FROM BACKEND
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("recent_repos") || "[]");
-    setRecentRepos(saved);
+    client
+      .get("/auth/recent-repos")
+      .then((res) => setRecentRepos(res.data))
+      .catch(() => setRecentRepos([]));
   }, []);
 
   // calculations
   const avgCoverage =
     modules.length > 0
-      ? modules.reduce((sum, m) => sum + (m.features?.test_coverage || 0), 0) /
-        modules.length
+      ? modules.reduce(
+          (sum, m) => sum + (m.features?.test_coverage || 0),
+          0
+        ) / modules.length
       : 0;
 
   const totalVulns = modules.reduce(
@@ -73,12 +77,14 @@ const Dashboard = ({ userName, initials, handleLogout }) => {
       setSummary(summaryRes.data);
       setModules(modulesRes.data || []);
 
-      // Save recent repos
-      const saved = JSON.parse(localStorage.getItem("recent_repos") || "[]");
-      const updated = [repoUrl, ...saved.filter((r) => r !== repoUrl)].slice(0, 5);
+      // ✅ SAVE TO BACKEND (correct way)
+      await client.post("/auth/recent-repos", {
+        repo_url: repoUrl,
+      });
 
-      localStorage.setItem("recent_repos", JSON.stringify(updated));
-      setRecentRepos(updated);
+      // ✅ REFRESH LIST
+      const res = await client.get("/auth/recent-repos");
+      setRecentRepos(res.data);
 
       toast.success("Scan complete 🚀");
     } catch (err) {
@@ -91,7 +97,6 @@ const Dashboard = ({ userName, initials, handleLogout }) => {
 
   return (
     <div className="app-layout">
-      
       <Sidebar
         recentRepos={recentRepos}
         onSelectRepo={(repo) => {
@@ -164,4 +169,3 @@ const Dashboard = ({ userName, initials, handleLogout }) => {
 };
 
 export default Dashboard;
-

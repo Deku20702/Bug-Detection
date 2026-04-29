@@ -3,6 +3,7 @@ from pathlib import Path
 
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, status
+from langgraph import graph
 
 from app.database import mongo_db, neo4j_driver
 from app.deps import get_current_user_email
@@ -59,32 +60,65 @@ def start_scan(payload: ScanStartRequest, email: str = Depends(get_current_user_
     anti_patterns = detect_anti_patterns(graph)
     features = extract_features(graph)
     risks = predict_defects(features)
-    recommendations = run_langgraph_reasoning(risks, anti_patterns)
-    
-    # --- NEW CODE: INJECT CODE EVIDENCE INTO RECOMMENDATIONS ---
-    # We map the exact lines of code from the graph edges into the recommendations
+    recommendations = run_langgraph_reasoning(
+        risks=risks,
+        anti_patterns=anti_patterns,
+        features=features
+    )
+
+    #  MUST be inside start_scan()
     for rec in recommendations:
+
+        # Safety check
+        if not isinstance(rec, dict) or "module" not in rec:
+            continue
+
         module_name = rec.get("module")
+
+        # Skip low-risk modules
+        if risks.get(module_name, 0) < 0.35:
+            continue
+
         evidence_list = []
-        
-        if module_name and graph.has_node(module_name):
+
+        #  FIXED
+        if module_name:
+
+            # 🔽 Outgoing edges
             for _, target, edge_data in graph.out_edges(module_name, data=True):
                 if "evidence" in edge_data:
                     evidence_list.extend(edge_data["evidence"])
-            
+
+            # 🔼 Incoming edges
             in_count = 0
             for source, _, edge_data in graph.in_edges(module_name, data=True):
                 if "evidence" in edge_data and in_count < 3:
                     evidence_list.extend(edge_data["evidence"])
                     in_count += 1
-            
-            # THE FIX: Remove duplicates so the UI looks clean!
-            unique_evidence = { (e["line"], e["code"]): e for e in evidence_list }.values()
-            
-            # Sort the evidence by line number
-            evidence_list = sorted(list(unique_evidence), key=lambda x: x.get("line", 0))
-            
+
+            # 🧹 Remove duplicates
+            unique_evidence = {
+                (e["line"], e["code"]): e for e in evidence_list
+            }.values()
+
+            # 📊 Sort
+            evidence_list = sorted(
+                list(unique_evidence),
+                key=lambda x: x.get("line", 0)
+            )
+
+            # 🔥 Limit
+            evidence_list = evidence_list[:10]
+
         rec["evidence"] = evidence_list
+
+
+    # SORT AFTER LOOP (correct place)
+    recommendations = sorted(
+        recommendations,
+        key=lambda x: x.get("score", 0),
+        reverse=True
+    )
     # -----------------------------------------------------------
 
     edges = list(graph.edges())
